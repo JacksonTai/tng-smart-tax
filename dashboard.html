@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tax Relief Dashboard</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #1a1a2e;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+.phone {
+  width: 390px;
+  height: 844px;
+  background: #f2f2f7;
+  border-radius: 44px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+}
+
+/* Header */
+.header {
+  background: linear-gradient(160deg, #0057b8, #003d8f);
+  padding: 44px 18px 18px;
+  color: white;
+  flex-shrink: 0;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.back-btn {
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: white;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.header-title { font-size: 17px; font-weight: 800; }
+
+/* Summary strip */
+.summary-strip {
+  display: flex;
+  gap: 8px;
+  padding: 12px 14px 0;
+  flex-shrink: 0;
+}
+
+.s-card {
+  flex: 1;
+  background: white;
+  border-radius: 12px;
+  padding: 12px 10px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+}
+
+.s-val {
+  font-size: 16px;
+  font-weight: 900;
+  color: #0057b8;
+  margin-bottom: 3px;
+}
+
+.s-lbl {
+  font-size: 9px;
+  color: #888;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+/* Scroll */
+.scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 14px 30px;
+  scrollbar-width: none;
+}
+.scroll-area::-webkit-scrollbar { display: none; }
+
+/* Category breakdown */
+.section-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: #222;
+  margin: 12px 0 8px;
+}
+
+.cat-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+
+.cat-row {
+  background: white;
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.cat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 7px;
+}
+
+.cat-name {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #222;
+}
+
+.cat-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.cat-amounts {
+  font-size: 11px;
+  color: #555;
+  font-weight: 600;
+}
+
+.cat-amounts span { color: #0057b8; font-weight: 800; }
+
+.bar-bg {
+  background: #e8f0fe;
+  border-radius: 6px;
+  height: 7px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 1s ease;
+}
+
+.cat-sub {
+  font-size: 10px;
+  color: #aaa;
+  margin-top: 5px;
+}
+
+/* Filter chips */
+.chips {
+  display: flex;
+  gap: 7px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 10px;
+  scrollbar-width: none;
+}
+.chips::-webkit-scrollbar { display: none; }
+
+.chip {
+  white-space: nowrap;
+  padding: 6px 13px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1.5px solid #ddd;
+  background: white;
+  color: #555;
+  flex-shrink: 0;
+}
+
+.chip.active {
+  background: #0057b8;
+  color: white;
+  border-color: #0057b8;
+}
+
+/* Transaction cards */
+.txn-list { display: flex; flex-direction: column; gap: 9px; }
+
+.txn-card {
+  background: white;
+  border-radius: 13px;
+  padding: 13px;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.06);
+}
+
+.txn-top {
+  display: flex;
+  gap: 11px;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.txn-icon {
+  width: 42px; height: 42px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 19px;
+  flex-shrink: 0;
+}
+
+.txn-body { flex: 1; min-width: 0; }
+
+.txn-merchant {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111;
+}
+
+.txn-amount {
+  font-size: 14px;
+  font-weight: 800;
+  color: #111;
+  margin-top: 1px;
+}
+
+.txn-no {
+  font-size: 10px;
+  color: #bbb;
+  margin-top: 2px;
+}
+
+/* AI reasoning pill */
+.ai-reasoning {
+  background: #f8faff;
+  border: 1px solid #dbeafe;
+  border-radius: 10px;
+  padding: 9px 11px;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.ai-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.ai-text {
+  font-size: 11px;
+  color: #374151;
+  line-height: 1.5;
+}
+
+.ai-text .item-name {
+  font-weight: 700;
+  color: #111;
+}
+
+.ai-text .item-type {
+  display: inline-block;
+  background: #e0e7ff;
+  color: #3730a3;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 10px;
+  margin: 0 2px;
+}
+
+.ai-text .cat-name {
+  display: inline-block;
+  font-weight: 700;
+  color: #0057b8;
+}
+
+.ai-label {
+  font-size: 9px;
+  color: #9ca3af;
+  font-weight: 600;
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.cat-badge {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+  display: inline-block;
+  margin-top: 6px;
+}
+
+/* AI disclaimer banner */
+.ai-disclaimer {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 10px;
+  padding: 9px 12px;
+  font-size: 11px;
+  color: #92400e;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+.state-msg {
+  text-align: center;
+  padding: 40px 20px;
+  color: #aaa;
+  font-size: 13px;
+}
+
+.spinner {
+  width: 32px; height: 32px;
+  border: 3px solid #e0e0e0;
+  border-top-color: #0057b8;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 12px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div class="phone">
+
+  <div class="header">
+    <div class="header-top">
+      <a href="index.html" class="back-btn">←</a>
+      <div class="header-title">Tax Relief Tracker</div>
+    </div>
+  </div>
+
+  <!-- Summary strip -->
+  <div class="summary-strip">
+    <div class="s-card">
+      <div class="s-val" id="totalAmount">—</div>
+      <div class="s-lbl">Total Claimable</div>
+    </div>
+    <div class="s-card">
+      <div class="s-val" id="totalCount">—</div>
+      <div class="s-lbl">Eligible Items</div>
+    </div>
+    <div class="s-card">
+      <div class="s-val" id="totalSaving">—</div>
+      <div class="s-lbl">Est. Tax Saving*</div>
+    </div>
+  </div>
+
+  <div class="scroll-area">
+
+    <!-- Category breakdown -->
+    <div class="section-title">By Relief Category</div>
+    <div class="cat-list" id="catList">
+      <div class="state-msg"><div class="spinner"></div>Loading...</div>
+    </div>
+
+    <!-- Transactions -->
+    <div class="section-title">Detected Transactions</div>
+
+    <div class="ai-disclaimer">
+      🤖 These items were detected and classified by AI based on your invoice data and merchant context. Always verify before submitting your tax return.
+    </div>
+
+    <div class="chips" id="chips">
+      <div class="chip active" data-cat="All" onclick="filterBy('All', this)">All</div>
+    </div>
+
+    <div class="txn-list" id="txnList">
+      <div class="state-msg"><div class="spinner"></div>Loading...</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const API = "https://0ggk6cpc6i.execute-api.ap-southeast-1.amazonaws.com/default/readTaxReliefClaimable";
+
+// Malaysia LHDN relief limits (RM)
+const LIMITS = {
+  "Lifestyle Relief":  2500,
+  "Education Relief":  7000,
+  "Medical Relief":    10000,
+  "Insurance Relief":  3000,
+  "Childcare Relief":  3000,
+};
+
+const CAT_COLORS = {
+  "Lifestyle Relief":  { dot: "#0057b8", bar: "#0057b8", bg: "#e8f0fe", badge: "#e8f0fe", text: "#1d4ed8" },
+  "Education Relief":  { dot: "#7c3aed", bar: "#7c3aed", bg: "#ede9fe", badge: "#ede9fe", text: "#6d28d9" },
+  "Medical Relief":    { dot: "#dc2626", bar: "#dc2626", bg: "#fee2e2", badge: "#fee2e2", text: "#b91c1c" },
+  "Insurance Relief":  { dot: "#059669", bar: "#059669", bg: "#d1fae5", badge: "#d1fae5", text: "#065f46" },
+  "Childcare Relief":  { dot: "#d97706", bar: "#d97706", bg: "#fef3c7", badge: "#fef3c7", text: "#92400e" },
+};
+
+const CAT_ICONS = {
+  "Lifestyle Relief":  "🛍️",
+  "Education Relief":  "📚",
+  "Medical Relief":    "🏥",
+  "Insurance Relief":  "🛡️",
+  "Childcare Relief":  "👶",
+};
+
+const MERCHANT_ICONS = {
+  "Electronics Retailer":      "💻",
+  "Childcare Center":          "👶",
+  "Insurance Provider":        "🛡️",
+  "Sports Equipment Seller":   "🏃",
+  "Books & Education Store":   "📚",
+  "Pharmacy & Health":         "💊",
+};
+
+let allData = [];
+let activeCategory = "All";
+
+async function loadData() {
+  try {
+    const res = await fetch(API);
+    const json = await res.json();
+    allData = json.data || [];
+    allData.sort((a, b) => {
+      const numA = parseInt((a.transaction_id || a.transaction_no || "").replace(/\D/g, "")) || 0;
+      const numB = parseInt((b.transaction_id || b.transaction_no || "").replace(/\D/g, "")) || 0;
+      return numB - numA;
+    });
+    renderSummary(json);
+    renderCategories(allData);
+    renderChips(allData);
+    renderTransactions(allData);
+  } catch (e) {
+    document.getElementById("catList").innerHTML =
+      `<div class="state-msg">⚠️ Failed to load data</div>`;
+    document.getElementById("txnList").innerHTML = "";
+  }
+}
+
+function renderSummary(json) {
+  const items = json.data || [];
+  const total = items.reduce((s, d) => s + (parseFloat(d.amount) || 0), 0);
+  const count = items.length;
+  const saving = total * 0.15;
+
+  document.getElementById("totalAmount").textContent = "RM " + total.toLocaleString("en-MY", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  document.getElementById("totalCount").textContent = count;
+  document.getElementById("totalSaving").textContent = "RM " + saving.toLocaleString("en-MY", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function renderCategories(data) {
+  // Group by category
+  const groups = {};
+  data.forEach(d => {
+    const cat = d.possible_tax_relief_category;
+    if (!groups[cat]) groups[cat] = 0;
+    groups[cat] += parseFloat(d.amount) || 0;
+  });
+
+  const html = Object.entries(groups).map(([cat, total]) => {
+    const limit = LIMITS[cat] || 1000;
+    const pct = Math.min((total / limit) * 100, 100).toFixed(0);
+    const c = CAT_COLORS[cat] || { dot: "#888", bar: "#888", bg: "#eee" };
+    const icon = CAT_ICONS[cat] || "📋";
+
+    return `
+      <div class="cat-row">
+        <div class="cat-header">
+          <div class="cat-name">
+            <div class="cat-dot" style="background:${c.dot}"></div>
+            ${icon} ${cat}
+          </div>
+          <div class="cat-amounts">
+            <span>RM ${total.toLocaleString("en-MY", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span> / RM ${limit.toLocaleString("en-MY")}
+          </div>
+        </div>
+        <div class="bar-bg">
+          <div class="bar-fill" style="width:0%;background:${c.bar}" data-pct="${pct}"></div>
+        </div>
+        <div class="cat-sub">${pct}% of annual limit used</div>
+      </div>`;
+  }).join("");
+
+  document.getElementById("catList").innerHTML = html || `<div class="state-msg">No data</div>`;
+
+  // Animate bars
+  setTimeout(() => {
+    document.querySelectorAll(".bar-fill").forEach(el => {
+      el.style.width = el.dataset.pct + "%";
+    });
+  }, 200);
+}
+
+function renderChips(data) {
+  const cats = ["All", ...new Set(data.map(d => d.possible_tax_relief_category))];
+  const chipsEl = document.getElementById("chips");
+  chipsEl.innerHTML = cats.map(cat =>
+    `<div class="chip ${cat === activeCategory ? 'active' : ''}" data-cat="${cat}" onclick="filterBy('${cat}', this)">${cat}</div>`
+  ).join("");
+}
+
+function filterBy(cat, el) {
+  activeCategory = cat;
+  document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+  el.classList.add("active");
+
+  const filtered = cat === "All" ? allData : allData.filter(d => d.possible_tax_relief_category === cat);
+  renderTransactions(filtered);
+}
+
+function reasoningText(d) {
+  const cat = d.possible_tax_relief_category;
+  const name = d.item_name;
+  const type = d.item_type;
+  const merchant = d.merchant_name;
+  const merchantType = d.merchant_type;
+
+  // Vague / SKU-like item name — lean on merchant context
+  const isVague = type === "Unknown"
+    || /^[A-Z]{2,}\d{4,}$/i.test(name)
+    || name.toLowerCase().includes("sku");
+
+  // Model number — recognisable product but not a plain description
+  const isModel = !isVague && /\d/.test(name) && name.split(" ").length <= 3;
+
+  if (isVague) {
+    return `The item name "<span class="item-name">${name}</span>" doesn't tell us much on its own,
+      but since this was purchased at <span class="item-name">${merchant}</span> — a
+      <span class="item-type">${merchantType}</span> — AI treated it as a
+      <span class="item-type">${type !== "Unknown" ? type : "potentially relevant item"}</span>
+      that could fall under <span class="cat-name">${cat}</span>.`;
+  }
+
+  if (isModel) {
+    return `"<span class="item-name">${name}</span>" looks like a product model name.
+      AI recognised it as a <span class="item-type">${type}</span>, and given that
+      <span class="item-name">${merchant}</span> is a <span class="item-type">${merchantType}</span>,
+      this purchase is likely claimable under <span class="cat-name">${cat}</span>.`;
+  }
+
+  // Clear descriptive name — natural sentence
+  return `You bought "<span class="item-name">${name}</span>" from
+    <span class="item-name">${merchant}</span>, which is a
+    <span class="item-type">${merchantType}</span>.
+    AI classified this as a <span class="item-type">${type}</span>,
+    making it eligible under <span class="cat-name">${cat}</span>.`;
+}
+
+function renderTransactions(data) {
+  if (!data.length) {
+    document.getElementById("txnList").innerHTML = `<div class="state-msg">No transactions found</div>`;
+    return;
+  }
+
+  const html = data.map(d => {
+    const cat = d.possible_tax_relief_category;
+    const c = CAT_COLORS[cat] || { bg: "#eee", badge: "#eee", text: "#555" };
+    const icon = MERCHANT_ICONS[d.merchant_type] || "🏪";
+    const amount = d.amount ? `RM ${parseFloat(d.amount).toLocaleString("en-MY", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "—";
+
+    return `
+      <div class="txn-card">
+        <div class="txn-top">
+          <div class="txn-icon" style="background:${c.bg}">${icon}</div>
+          <div class="txn-body">
+            <div class="txn-merchant">${d.merchant_name}</div>
+            <div class="txn-amount">${amount}</div>
+            <div class="txn-no">${d.transaction_id || d.transaction_no}</div>
+          </div>
+        </div>
+
+        <div class="ai-reasoning">
+          <div class="ai-icon">🤖</div>
+          <div>
+            <div class="ai-text">${reasoningText(d)}</div>
+          </div>
+        </div>
+      </div>`;
+  }).join("");
+
+  document.getElementById("txnList").innerHTML = html;
+}
+
+loadData();
+</script>
+
+</body>
+</html>

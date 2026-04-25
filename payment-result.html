@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment Result</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #1a1a2e;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+.phone {
+  width: 390px;
+  height: 844px;
+  background: #fff;
+  border-radius: 44px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+  position: relative;
+}
+
+/* Header */
+.header {
+  background: #0057b8;
+  padding: 48px 20px 16px;
+  text-align: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.header-title {
+  font-size: 17px;
+  font-weight: 700;
+}
+
+/* Body */
+.body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 24px 24px;
+  overflow-y: auto;
+}
+
+.success-icon {
+  width: 64px;
+  height: 64px;
+  background: #22c55e;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  color: white;
+  margin-bottom: 16px;
+}
+
+.pay-amount {
+  font-size: 38px;
+  font-weight: 900;
+  color: #111;
+  margin-bottom: 4px;
+}
+
+.pay-status {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 10px;
+}
+
+.points-badge {
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 6px 16px;
+  border-radius: 20px;
+  margin-bottom: 28px;
+}
+
+/* Details table */
+.details {
+  width: 100%;
+  border-top: 1px solid #f0f0f0;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 13px 0;
+  border-bottom: 1px solid #f5f5f5;
+  gap: 12px;
+}
+
+.detail-label {
+  font-size: 13px;
+  color: #888;
+  flex-shrink: 0;
+}
+
+.detail-value {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111;
+  text-align: right;
+  word-break: break-all;
+}
+
+/* Tax nudge */
+.tax-nudge {
+  width: 100%;
+  background: #fffbeb;
+  border: 1.5px solid #fde68a;
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tax-nudge-text {
+  font-size: 13px;
+  color: #92400e;
+  line-height: 1.5;
+}
+
+.tax-nudge-text a {
+  color: #0057b8;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* Done button */
+.footer {
+  padding: 16px 24px 32px;
+  flex-shrink: 0;
+}
+
+.done-btn {
+  width: 100%;
+  padding: 16px;
+  background: #0057b8;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="phone">
+
+  <div class="header">
+    <div class="header-title">Payment Result</div>
+  </div>
+
+  <div class="body">
+    <div class="success-icon">✓</div>
+    <div class="pay-amount" id="payAmount">RM —</div>
+    <div class="pay-status">Paid</div>
+    <div class="points-badge" id="payPoints">+ — points</div>
+
+    <div class="details">
+      <div class="detail-row">
+        <div class="detail-label">Merchant</div>
+        <div class="detail-value" id="payMerchant">—</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">Transaction ID</div>
+        <div class="detail-value" id="payTxnId">—</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">Date &amp; Time</div>
+        <div class="detail-value" id="payDate"></div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">eWallet<br>Reference No.</div>
+        <div class="detail-value" id="payRef">—</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">Payment Method</div>
+        <div class="detail-value">eWallet Balance</div>
+      </div>
+    </div>
+
+    <!-- Tax Relief Nudge -->
+    <div class="tax-nudge">
+      <span style="font-size:20px;">🎉</span>
+      <div class="tax-nudge-text">
+        We found something you bought that may be eligible for tax relief.
+        <a href="dashboard.html"> See here →</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <button class="done-btn" onclick="window.location.href='index.html'">Done</button>
+  </div>
+
+</div>
+
+<script>
+  const now = new Date();
+  const pad = n => String(n).padStart(2, "0");
+  document.getElementById("payDate").innerText =
+    `${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()} ` +
+    `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+
+  // Load last payment from localStorage
+  const MERCHANT_NAMES = {
+    "merchant_789": "Popular Bookstore",
+    "merchant_123": "Al-Ikhsan Sports",
+    "merchant_456": "Senheng"
+  };
+
+  const payment = JSON.parse(localStorage.getItem("lastPayment") || "{}");
+
+  if (payment.amount) {
+    const amt = parseFloat(payment.amount);
+    document.getElementById("payAmount").textContent =
+      "RM " + amt.toLocaleString("en-MY", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    document.getElementById("payPoints").textContent =
+      "+ " + Math.floor(amt) + " points";
+  }
+
+  if (payment.merchant_id) {
+    document.getElementById("payMerchant").textContent =
+      MERCHANT_NAMES[payment.merchant_id] || payment.merchant_id;
+  }
+
+  if (payment.transaction_no) {
+    document.getElementById("payTxnId").textContent = payment.transaction_no;
+  }
+
+  // Generate a reference number
+  const ref = "TNG" + Date.now() + Math.floor(Math.random() * 1000);
+  document.getElementById("payRef").textContent = ref;
+</script>
+
+</body>
+</html>
